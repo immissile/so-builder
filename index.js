@@ -7,9 +7,9 @@ var _ = require('lodash-node'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
     clean = require('gulp-clean'),
-    rev = require('gulp-rev');
+    rev = require('gulp-rev'),
+    livereload = require('gulp-livereload');
     
-    //livereload = require('gulp-livereload'),
     //cache = require('gulp-cache'),
     //imagemin = require('gulp-imagemin'),
     //sourcemaps = require('gulp-sourcemaps');
@@ -79,6 +79,11 @@ module.exports = function(gulp, options){
         }
     });
     
+    // for images
+    gulp.task('images', function() {
+        console.log('images task coming soon~');
+    });
+    
     // build css
     gulp.task('build-css', function(){
         return gulp.src(op.appRoot + op.lessRoot + '/**/*.less')
@@ -117,6 +122,10 @@ module.exports = function(gulp, options){
     
     // watch
     gulp.task('watch', function() {
+        if (op.autoReload) {
+            livereload.listen();
+        }
+        
         gulp.start('styles', 'scripts');
 
         gulp.watch(op.appRoot + op.lessRoot + '/**/*.less', ['styles']);
@@ -127,17 +136,15 @@ module.exports = function(gulp, options){
 
         //gulp.watch('src/images/**/*', ['images']);
 
-        // for livereload
-        //var server = livereload();
-
         // when change
-        gulp.watch([
-            op.appRoot + op.jsRoot + '/**',
-            op.appRoot + op.lessRoot + '/**'
-        ]).on('change', function(file) {
-            // TODO
-        });
-
+        if (op.autoReload) {
+            gulp.watch([
+                op.appRoot + op.jsRoot + '/**',
+                op.appRoot + op.lessRoot + '/**'
+            ]).on('change', function(file) {
+                livereload.changed(file.path);
+            });
+        }
     });
     
     // dev task
