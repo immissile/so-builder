@@ -26,12 +26,12 @@ module.exports = function(gulp, options){
         
         jsRoot: 'scripts/js',
         jsDist: 'dist/js',
-        commonJson: 'common.json',
+        globalJson: 'global.json',
         jsRevName: 'rev-js.json',
 
         autoReload: false,
         notify: false,
-        showCommonJS: true, // 是否打印common.json列表
+        showGlobalJS: true, // global.json列表
         sourcemaps: false,
         debug: false
     };
@@ -60,19 +60,19 @@ module.exports = function(gulp, options){
     
     // for scripts
     gulp.task('scripts', function() {
-        var commonList = require(op.appRoot + op.jsRoot +'/common.json');
-        if (op.showCommonJS) {
-            console.log('concat common.json:');
-            _.each(commonList, function(file){
-                console.log('common file: ', file);
+        var globalList = require(op.appRoot + op.jsRoot +'/global.json');
+        if (op.showGlobalJS) {
+            console.log('concat global.json:');
+            _.each(globalList, function(file){
+                console.log('global file: ', file);
             });
         }
-        var stream = gulp.src(commonList)
-            .pipe(concat('common.js'))
+        var stream = gulp.src(globalList)
+            .pipe(concat('global.js'))
             .pipe(gulp.dest(op.appRoot + op.jsRoot));
         if (op.notify) {
             return stream.pipe(notify({
-                message: 'common.js build complete'
+                message: 'global.js build complete'
             }));
         } else {
             return stream;
@@ -131,7 +131,7 @@ module.exports = function(gulp, options){
         gulp.watch(op.appRoot + op.lessRoot + '/**/*.less', ['styles']);
         gulp.watch([
             op.appRoot + op.jsRoot + '/**/*.js',
-            op.appRoot + op.jsRoot + '/common.json'
+            op.appRoot + op.jsRoot + '/global.json'
         ], ['scripts']);
 
         //gulp.watch('src/images/**/*', ['images']);

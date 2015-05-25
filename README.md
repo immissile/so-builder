@@ -24,15 +24,16 @@ Builder(gulp, {
     cssRevName: 'rev-css.json',
     jsRoot: 'scripts/js',
     jsDist: 'dist/js',
-    commonJson: 'common.json', // common.js里需要包含的文件
+    globalJson: 'global.json', // global.js里需要包含的文件
     jsRevName: 'rev-js.json',
-    notify: true
+    autoReload: true, // 是否自动reload有改动的less文件
+    notify: true // 是否窗口提示改动
 });
 
-// commonJson path: scripts/js/common.json
+// globalJson path: scripts/js/global.json
+// jquery/bootstrap等全局的文件会被all in one成global.js
 
-then use cmd:
-gulp dev
-gulp build
+// 然后使用 gulp dev进入开发模式，so-builder会自动监控文件改动，并实时reload
+// gulp build去build线上版本
 
 ```
