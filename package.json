@@ -1,6 +1,6 @@
 {
   "name": "so-builder",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Niubility build tools for so.",
   "main": "index.js",
   "scripts": {
