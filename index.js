@@ -6,7 +6,7 @@ var _ = require('lodash-node'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
-    clean = require('gulp-clean'),
+    rimraf = require('gulp-rimraf'),
     rev = require('gulp-rev'),
     livereload = require('gulp-livereload');
 
@@ -117,7 +117,7 @@ module.exports = function(gulp, options){
             op.appRoot + op.distRoot + '/**/*.*',
             op.appRoot + op.distRoot + '/**/*'
         ])
-        .pipe(clean({force: true}));
+        .pipe(rimraf({force: true }));
     });
 
     // watch
@@ -153,8 +153,8 @@ module.exports = function(gulp, options){
     });
 
     // build task
-    gulp.task('build', function(){
-        gulp.start('clean', 'build-css', 'build-js');
+    gulp.task('build', ['clean'], function(){
+        gulp.start('build-css', 'build-js');
     });
 
     // default task
