@@ -9,7 +9,7 @@ var _ = require('lodash-node'),
     clean = require('gulp-clean'),
     rev = require('gulp-rev'),
     livereload = require('gulp-livereload');
-    
+
     //cache = require('gulp-cache'),
     //imagemin = require('gulp-imagemin'),
     //sourcemaps = require('gulp-sourcemaps');
@@ -18,12 +18,12 @@ module.exports = function(gulp, options){
     var defaults = {
         appRoot: './',
         distRoot: 'dist',
-        
+
         lessRoot: 'styles/less',
         cssRoot: 'styles/css',
         cssDist: 'dist/css',
         cssRevName: 'rev-css.json',
-        
+
         jsRoot: 'scripts/js',
         jsDist: 'dist/js',
         globalJson: 'global.json',
@@ -40,7 +40,7 @@ module.exports = function(gulp, options){
         console.log(op);
     }
     op.appRoot = op.appRoot + '/';
-    
+
     // for styles
     gulp.task('styles', function() {
         var stream = gulp.src(op.appRoot + op.lessRoot + '/**/*.less')
@@ -57,7 +57,7 @@ module.exports = function(gulp, options){
             return stream;
         }
     });
-    
+
     // for scripts
     gulp.task('scripts', function() {
         var globalList = require(op.appRoot + op.jsRoot +'/global.json');
@@ -78,12 +78,12 @@ module.exports = function(gulp, options){
             return stream;
         }
     });
-    
+
     // for images
     gulp.task('images', function() {
         console.log('images task coming soon~');
     });
-    
+
     // build css
     gulp.task('build-css', function(){
         return gulp.src(op.appRoot + op.lessRoot + '/**/*.less')
@@ -96,7 +96,7 @@ module.exports = function(gulp, options){
             }))
             .pipe(gulp.dest(op.appRoot + op.distRoot + '/'));
     });
-    
+
     // build js
     gulp.task('build-js', function(){
         return gulp.src(op.appRoot + op.jsRoot + '/**/*.js')
@@ -110,7 +110,7 @@ module.exports = function(gulp, options){
             }))
             .pipe(gulp.dest(op.appRoot + op.distRoot));
     });
-    
+
     // clean
     gulp.task('clean', function() {
         return gulp.src([
@@ -119,13 +119,13 @@ module.exports = function(gulp, options){
         ])
         .pipe(clean({force: true}));
     });
-    
+
     // watch
     gulp.task('watch', function() {
         if (op.autoReload) {
             livereload.listen();
         }
-        
+
         gulp.start('styles', 'scripts');
 
         gulp.watch(op.appRoot + op.lessRoot + '/**/*.less', ['styles']);
@@ -146,17 +146,17 @@ module.exports = function(gulp, options){
             });
         }
     });
-    
+
     // dev task
     gulp.task('dev', function(){
         gulp.start('watch');
     });
-    
+
     // build task
     gulp.task('build', function(){
-        gulp.start('build-css', 'build-js');
+        gulp.start('clean', 'build-css', 'build-js');
     });
-    
+
     // default task
     gulp.task('default', ['clean'], function() {
         gulp.start('styles', 'scripts', 'images');
