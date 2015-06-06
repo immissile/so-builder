@@ -40,6 +40,8 @@ module.exports = function(gulp, options){
         console.log(op);
     }
     op.appRoot = op.appRoot + '/';
+    
+    var globalList = require(op.appRoot + op.jsRoot +'/global.json');
 
     // for styles
     gulp.task('styles', function() {
@@ -60,7 +62,6 @@ module.exports = function(gulp, options){
 
     // for scripts
     gulp.task('scripts', function() {
-        var globalList = require(op.appRoot + op.jsRoot +'/global.json');
         if (op.showGlobalJS) {
             console.log('concat global.json:');
             _.each(globalList, function(file){
@@ -99,6 +100,15 @@ module.exports = function(gulp, options){
 
     // build js
     gulp.task('build-js', function(){
+        console.log('concat global.json:');
+        _.each(globalList, function(file){
+            console.log('global file: ', file);
+        });
+        gulp.src(globalList)
+            .pipe(concat('global.js'))
+            .pipe(gulp.dest(op.appRoot + op.jsRoot));
+        console.log('global.js build completed');
+        
         return gulp.src(op.appRoot + op.jsRoot + '/**/*.js')
             //.pipe(concat(''))
             //.pipe(gulp.dest('dist/js'))
