@@ -1,10 +1,11 @@
 {
   "name": "so-builder",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Niubility build tools for so.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "gulp dev",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,9 @@
   },
   "homepage": "https://github.com/immissile/so-builder",
   "dependencies": {
+    "cli-color": "^1.0.0",
     "gulp-autoprefixer": "^2.3.0",
+    "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.5.2",
     "gulp-less": "^3.0.3",
     "gulp-livereload": "^3.8.0",
@@ -25,7 +28,10 @@
     "gulp-notify": "^2.2.0",
     "gulp-rev": "^4.0.0",
     "gulp-rimraf": "^0.1.1",
+    "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0",
-    "lodash-node": "^3.9.1"
+    "html-browserify": "0.0.4",
+    "lodash-node": "^3.9.1",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
