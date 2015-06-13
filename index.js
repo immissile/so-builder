@@ -72,7 +72,6 @@ module.exports = function(gulp, options){
         }
         file = file || fileList;
         return gulp.src(file)
-            //.pipe(sourcemaps.init())
             .pipe(browserify({
                 //nobuiltins: 'events querystring',
                 //debug: true,
@@ -83,7 +82,6 @@ module.exports = function(gulp, options){
                     console.log('load module:', mod);
                 }*/
             }))
-            //.pipe(sourcemaps.write())
             .pipe(gulp.dest(op.appRoot + op.jsRoot));
     }
     
