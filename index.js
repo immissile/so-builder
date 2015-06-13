@@ -34,6 +34,8 @@ module.exports = function(gulp, options){
         globalJson: 'global.json',
         jsRevName: 'rev-js.json',
         
+        separateLib: false,
+        
         templateRoot: 'template',
 
         autoReload: false,
@@ -64,7 +66,11 @@ module.exports = function(gulp, options){
     
     // browserify
     function _browserify(file){
-        file = file || [op.appRoot + op.jsSource + '/**/*.js'];
+        var fileList = [op.appRoot + op.jsSource + '/**/*.js'];
+        if (op.separateLib) {
+            fileList.push('!' + op.appRoot + op.jsSource + '/lib/**/*.js');
+        }
+        file = file || fileList;
         return gulp.src(file)
             .pipe(sourcemaps.init())
             .pipe(browserify({
@@ -72,7 +78,7 @@ module.exports = function(gulp, options){
                 //debug: true,
                 transform: html,
                 insertGlobals: false,
-                ignore: 'jquery',
+                ignore: 'jquery', // concat once
                 /*resolve: function(mod){
                     console.log('load module:', mod);
                 }*/
@@ -126,9 +132,7 @@ module.exports = function(gulp, options){
             }
         }
         var stream = gulp.src(globalList)
-            //.pipe(sourcemaps.init())
             .pipe(concat('global.js'))
-            //.pipe(sourcemaps.write())
             .pipe(gulp.dest(op.appRoot + op.jsRoot));
         if (op.notify) {
             return stream.pipe(notify({
@@ -142,7 +146,6 @@ module.exports = function(gulp, options){
     // for scripts
     gulp.task('scripts', function() {
         var stream = _browserify();
-        
         if (op.notify) {
             return stream.pipe(notify({
                 message: 'global.js build complete'
