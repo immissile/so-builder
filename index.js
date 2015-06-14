@@ -116,7 +116,7 @@ module.exports = function(gulp, options){
     });
     
     // build global.js
-    gulp.task('globalScript', function(){
+    function buildGlobal() {
         if (op.showGlobalJS) {
             if (globalList.length > 0) {
                 console.log(clc.magenta('concat global.json:'));
@@ -127,9 +127,15 @@ module.exports = function(gulp, options){
                 console.log(clc.yellow('global scripts list is empty'));
             }
         }
-        var stream = gulp.src(globalList)
+        
+        return gulp.src(globalList)
             .pipe(concat('global.js'))
             .pipe(gulp.dest(op.appRoot + op.jsRoot));
+    }
+    
+    // for global.js
+    gulp.task('globalScript', function(){
+        var stream = buildGlobal();
         if (op.notify) {
             return stream.pipe(notify({
                 message: 'global.js build complete'
@@ -168,10 +174,18 @@ module.exports = function(gulp, options){
             }))
             .pipe(gulp.dest(op.appRoot + op.distRoot + '/'));
     });
+    
+    // build global.js
+    gulp.task('build-global', function(){
+        return buildGlobal();
+    });
 
     // build js
-    gulp.task('build-js', ['globalScript'], function(){
-        return gulp.src(op.appRoot + op.jsRoot + '/**/*.js')
+    gulp.task('build-js', ['build-global', 'scripts'], function(){
+        return gulp.src([
+                op.appRoot + op.jsRoot + '/**/*.js',
+                '!' + op.appRoot + op.jsSource + '/lib/**/*.js',
+            ])
             .pipe(uglify())
             .pipe(rev())
             .pipe(gulp.dest(op.appRoot + op.jsDist))
@@ -181,13 +195,14 @@ module.exports = function(gulp, options){
             .pipe(gulp.dest(op.appRoot + op.distRoot));
     });
 
-    // clean
+    // clean dist
     gulp.task('clean', function() {
         return del([
-            op.appRoot + op.distRoot + '/**/*',
+            op.appRoot + op.distRoot + '/**/*.*',
+            op.appRoot + op.jsRoot + '/**/*.*'
         ]);
     });
-
+    
     // watch
     gulp.task('watch', ['styles', 'globalScript', 'scripts'], function() {
         if (op.autoReload) {
@@ -227,9 +242,7 @@ module.exports = function(gulp, options){
 
     // dev task
     gulp.task('dev', function(){
-        del([
-            op.appRoot + op.jsRoot + '/**/*'
-        ]);
+        del([op.appRoot + op.jsRoot + '/**/*']);
         gulp.start('watch');
     });
 
