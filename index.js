@@ -36,7 +36,7 @@ module.exports = function(gulp, options){
         
         separateLib: false,
         
-        templateRoot: 'template',
+        templateRoot: 'scripts/template',
 
         autoReload: false,
         notify: false,
@@ -204,7 +204,8 @@ module.exports = function(gulp, options){
         // watch js
         gulp.watch([
             op.appRoot + op.jsSource + '/**/*.js',
-            op.appRoot + op.jsSource + '/global.json'
+            op.appRoot + op.jsSource + '/global.json',
+            op.appRoot + op.templateRoot + '/**/*.html'
         ], function(file){
             console.log(clc.green(clc.bold('js file ' + file.type + ': '), file.path));
             gulp.start('scripts');
