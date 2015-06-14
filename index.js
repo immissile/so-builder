@@ -75,7 +75,7 @@ module.exports = function(gulp, options){
                 //debug: true,
                 transform: html,
                 insertGlobals: false,
-                ignore: 'jquery', // concat once
+                //ignore: 'jquery', // concat once
                 /*resolve: function(mod){
                     console.log('load module:', mod);
                 }*/
