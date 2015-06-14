@@ -9,7 +9,7 @@ var _ = require('lodash-node'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
-    rimraf = require('gulp-rimraf'),
+    del = require('del'),
     rev = require('gulp-rev'),
     livereload = require('gulp-livereload'),
     source = require('vinyl-source-stream'),
@@ -183,11 +183,9 @@ module.exports = function(gulp, options){
 
     // clean
     gulp.task('clean', function() {
-        return gulp.src([
-            op.appRoot + op.distRoot + '/**/*.*',
-            op.appRoot + op.distRoot + '/**/*'
-        ])
-        .pipe(rimraf({force: true }));
+        return del([
+            op.appRoot + op.distRoot + '/**/*',
+        ]);
     });
 
     // watch
@@ -228,10 +226,9 @@ module.exports = function(gulp, options){
 
     // dev task
     gulp.task('dev', function(){
-        gulp.src([
+        del([
             op.appRoot + op.jsRoot + '/**/*'
-        ])
-        .pipe(rimraf({force: true }));
+        ]);
         gulp.start('watch');
     });
 
