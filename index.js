@@ -59,8 +59,6 @@ module.exports = function(gulp, options){
             .pipe(less())
             .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
             .pipe(sourcemaps.write())
-            //.pipe(gulp.dest(op.appRoot + op.cssRoot))
-            //.pipe(minifycss())
             .pipe(gulp.dest(op.appRoot + op.cssRoot));
     }
     
@@ -201,7 +199,8 @@ module.exports = function(gulp, options){
         // watch less
         gulp.watch(op.appRoot + op.lessRoot + '/**/*.less', function(file){
             console.log(clc.green(clc.bold('less file ' + file.type + ': '), file.path));
-            buildLess(file.path);
+            gulp.start('styles');
+            //buildLess(file.path);
         });
         
         // watch js
@@ -210,8 +209,8 @@ module.exports = function(gulp, options){
             op.appRoot + op.jsSource + '/global.json'
         ], function(file){
             console.log(clc.green(clc.bold('js file ' + file.type + ': '), file.path));
-            //if ()
-            _browserify(file.path);
+            gulp.start('scripts');
+            //_browserify(file.path);
         });
 
         //gulp.watch('src/images/**/*', ['images']);
@@ -229,6 +228,10 @@ module.exports = function(gulp, options){
 
     // dev task
     gulp.task('dev', function(){
+        gulp.src([
+            op.appRoot + op.jsRoot + '/**/*'
+        ])
+        .pipe(rimraf({force: true }));
         gulp.start('watch');
     });
 
