@@ -14,8 +14,7 @@ var _ = require('lodash-node'),
     livereload = require('gulp-livereload'),
     source = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
-    imagemin = require('gulp-imagemin'),
-    pngquant = require('imagemin-pngquant');
+    imagemin = require('gulp-imagemin');
 
 module.exports = function(gulp, options){
     var defaults = {
