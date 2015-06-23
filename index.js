@@ -13,10 +13,9 @@ var _ = require('lodash-node'),
     rev = require('gulp-rev'),
     livereload = require('gulp-livereload'),
     source = require('vinyl-source-stream'),
-    sourcemaps = require('gulp-sourcemaps');
-
-    //cache = require('gulp-cache')
-    //imagemin = require('gulp-imagemin')
+    sourcemaps = require('gulp-sourcemaps'),
+    imagemin = require('gulp-imagemin'),
+    pngquant = require('imagemin-pngquant');
 
 module.exports = function(gulp, options){
     var defaults = {
@@ -33,9 +32,13 @@ module.exports = function(gulp, options){
         jsDist: 'dist/js',
         globalJson: 'global.json',
         jsRevName: 'rev-js.json',
-        
+
+        imgRoot: 'images',
+        imgDist: 'dist/img',
+        imgRevName: 'rev-img.json',
+
         separateLib: false,
-        
+
         templateRoot: 'scripts/template',
 
         autoReload: false,
@@ -45,12 +48,12 @@ module.exports = function(gulp, options){
         debug: false
     };
     var op = _.extend(defaults, options);
-    
+
     // for display debug msg
     function debug(msg) {
         return console.log(clc.yellow(clc.bold('debug msg: ') + msg));
     }
-    
+
     // buildLess
     function buildLess(file){
         file = file || [op.appRoot + op.lessRoot + '/**/*.less'];
@@ -61,7 +64,7 @@ module.exports = function(gulp, options){
             .pipe(sourcemaps.write())
             .pipe(gulp.dest(op.appRoot + op.cssRoot));
     }
-    
+
     // browserify
     function _browserify(file){
         var fileList = [op.appRoot + op.jsSource + '/**/*.js'];
@@ -82,12 +85,12 @@ module.exports = function(gulp, options){
             }))
             .pipe(gulp.dest(op.appRoot + op.jsRoot));
     }
-    
+
     if (op.debug) {
         debug(op);
     }
     op.appRoot = op.appRoot + '/';
-    
+
     var globalList = [];
     try {
         globalList = require(op.appRoot + op.jsSource +'/global.json');
@@ -95,14 +98,14 @@ module.exports = function(gulp, options){
         console.log(clc.red(clc.bold('Error: ') + 'missing global.json'));
         console.log(clc.yellow(clc.bold('Tips: ') + 'create global.json in folder ' + op.jsSource + '/'));
     }
-    
+
     if (op.debug) {
         debug('globalList file:');
         _.each(globalList, function(file){
             console.log(clc.cyan(clc.bold('global file: '), file));
         });
     }
-    
+
     // for styles
     gulp.task('styles', function() {
         var stream = buildLess();
@@ -114,7 +117,7 @@ module.exports = function(gulp, options){
             return stream;
         }
     });
-    
+
     // build global.js
     function buildGlobal() {
         if (op.showGlobalJS) {
@@ -127,12 +130,12 @@ module.exports = function(gulp, options){
                 console.log(clc.yellow('global scripts list is empty'));
             }
         }
-        
+
         return gulp.src(globalList)
             .pipe(concat('global.js'))
             .pipe(gulp.dest(op.appRoot + op.jsRoot));
     }
-    
+
     // for global.js
     gulp.task('globalScript', function(){
         var stream = buildGlobal();
@@ -157,11 +160,6 @@ module.exports = function(gulp, options){
         }
     });
 
-    // for images
-    gulp.task('images', function() {
-        console.log('images task coming soon~');
-    });
-
     // build css
     gulp.task('build-css', function(){
         return gulp.src(op.appRoot + op.lessRoot + '/**/*.less')
@@ -174,7 +172,7 @@ module.exports = function(gulp, options){
             }))
             .pipe(gulp.dest(op.appRoot + op.distRoot + '/'));
     });
-    
+
     // build global.js
     gulp.task('build-global', function(){
         return buildGlobal();
@@ -195,6 +193,22 @@ module.exports = function(gulp, options){
             .pipe(gulp.dest(op.appRoot + op.distRoot));
     });
 
+    // build images
+    gulp.task('build-images', function() {
+        return gulp.src(op.appRoot + op.imgRoot + '/**/*')
+            .pipe(imagemin({
+                progressive: true,
+                svgoPlugins: [{removeViewBox: false}],
+                //use: [pngquant()]
+            }))
+            .pipe(rev())
+            .pipe(gulp.dest(op.appRoot + op.imgDist))
+            .pipe(rev.manifest(op.imgRevName, {
+                merge: true
+            }))
+            .pipe(gulp.dest(op.appRoot + op.distRoot + '/'));
+    });
+
     // clean dist
     gulp.task('clean', function() {
         return del([
@@ -202,7 +216,7 @@ module.exports = function(gulp, options){
             op.appRoot + op.jsRoot + '/**/*.*'
         ]);
     });
-    
+
     // watch
     gulp.task('watch', ['styles', 'globalScript', 'scripts'], function() {
         if (op.autoReload) {
@@ -215,7 +229,7 @@ module.exports = function(gulp, options){
             gulp.start('styles');
             //buildLess(file.path);
         });
-        
+
         // watch js
         gulp.watch([
             op.appRoot + op.jsSource + '/**/*.js',
@@ -248,11 +262,11 @@ module.exports = function(gulp, options){
 
     // build task
     gulp.task('build', ['clean'], function(){
-        gulp.start('build-css', 'build-js');
+        gulp.start('build-css', 'build-js', 'build-images');
     });
 
     // default task
     gulp.task('default', ['clean'], function() {
-        gulp.start('styles', 'scripts', 'images');
+        gulp.start('watch');
     });
 };
