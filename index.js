@@ -13,8 +13,7 @@ var _ = require('lodash-node'),
     rev = require('gulp-rev'),
     livereload = require('gulp-livereload'),
     source = require('vinyl-source-stream'),
-    sourcemaps = require('gulp-sourcemaps'),
-    imagemin = require('gulp-imagemin');
+    sourcemaps = require('gulp-sourcemaps');
 
 module.exports = function(gulp, options){
     var defaults = {
@@ -195,11 +194,6 @@ module.exports = function(gulp, options){
     // build images
     gulp.task('build-images', function() {
         return gulp.src(op.appRoot + op.imgRoot + '/**/*')
-            .pipe(imagemin({
-                progressive: true,
-                svgoPlugins: [{removeViewBox: false}],
-                //use: [pngquant()]
-            }))
             .pipe(rev())
             .pipe(gulp.dest(op.appRoot + op.imgDist))
             .pipe(rev.manifest(op.imgRevName, {
